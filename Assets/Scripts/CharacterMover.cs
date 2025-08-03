@@ -2,14 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class CharacterMover : MonoBehaviour
 {
+    enum State
+    {
+        Walking,
+        Jumping
+    }
 
     [SerializeField] float moveSpeed = 1.0f;
     [SerializeField] float jumpSpeed = 10.0f;
     [SerializeField] float gravity = 1.0f;
     float _currentVelocityY = 0.0f;
-
+    State _state = State.Walking;
+    int _jumpNumber = 0;
 
     // Start is called before the first frame update
     public void Start()
@@ -32,14 +39,22 @@ public class CharacterMover : MonoBehaviour
         transform.localPosition += relativeMove;
 
         // jump
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && _jumpNumber < 2)
         {
+            _state = State.Jumping;
             _currentVelocityY = jumpSpeed;
+            _jumpNumber++;
         }
         transform.localPosition += new Vector3(0.0f, _currentVelocityY * Time.deltaTime, 0.0f);
         _currentVelocityY -= gravity * Time.deltaTime;
+        // stop jump
         if (transform.localPosition.y < 0.0f)
         {
+            if (_state == State.Jumping)
+            {
+                _state = State.Walking;
+                _jumpNumber = 0;
+            }
             _currentVelocityY = 0.0f;
             Vector3 pos = transform.localPosition;
             pos.y = 0.0f;
