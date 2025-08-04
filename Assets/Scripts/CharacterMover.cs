@@ -1,69 +1,63 @@
-using System.Collections;
-using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-
+[RequireComponent(typeof(Collider))]
 public class CharacterMover : MonoBehaviour
 {
-    enum State
-    {
-        Walking,
-        Jumping
-    }
+    [Header("Movement")]
+    [SerializeField] float moveSpeed = 5f;
+    [SerializeField] float jumpSpeed = 10f;
+    [SerializeField] float gravity = 30f;
 
-    [SerializeField] float moveSpeed = 1.0f;
-    [SerializeField] float jumpSpeed = 10.0f;
-    [SerializeField] float gravity = 1.0f;
-    float _currentVelocityY = 0.0f;
-    State _state = State.Walking;
-    int _jumpNumber = 0;
+    [Header("Grounding")]
+    [SerializeField] LayerMask platformLayer;
 
-    // Start is called before the first frame update
-    public void Start()
-    {
-        
-    }
+    int _jumpCount = 0;
+    float _velocityY = 0f;
 
-    // Update is called once per frame
     public void Update()
     {
-        // horizontal move
-        Vector3 relativeMove = Vector3.zero;
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {   
-            relativeMove.x = -moveSpeed * Time.deltaTime;
-        } else if (Input.GetKey(KeyCode.RightArrow))
-        {
-            relativeMove.x = moveSpeed * Time.deltaTime;
-        }
-        transform.localPosition += relativeMove;
+        // 1) Horizontal input
+        float h = 0f;
+        if (Input.GetKey(KeyCode.LeftArrow)) h = -1f;
+        if (Input.GetKey(KeyCode.RightArrow)) h = +1f;
 
-        // jump
-        if (Input.GetKeyDown(KeyCode.Space) && _jumpNumber < 2)
+        // Build a candidate position...
+        Vector3 pos = transform.position;
+
+        pos.x += h * moveSpeed * Time.deltaTime;
+
+        // 2) Apply gravity to vertical velocity
+        _velocityY -= gravity * Time.deltaTime;
+
+        // Compute next vertical position
+        float verticalDelta = _velocityY * Time.deltaTime;
+        float nextY = pos.y + verticalDelta;
+
+        // 3) If we're falling, raycast *from* our CURRENT position *down* to see if we land
+        if (_velocityY <= 0f)
         {
-            _state = State.Jumping;
-            _currentVelocityY = jumpSpeed;
-            _jumpNumber++;
-        }
-        transform.localPosition += new Vector3(0.0f, _currentVelocityY * Time.deltaTime, 0.0f);
-        _currentVelocityY -= gravity * Time.deltaTime;
-        // stop jump
-        if (transform.localPosition.y < 0.0f)
-        {
-            if (_state == State.Jumping)
+            // Ray origin just above where our feet were
+            Vector3 rayOrigin = pos;
+            float rayLength = Mathf.Abs(verticalDelta);
+
+            if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, rayLength, platformLayer))
             {
-                _state = State.Walking;
-                _jumpNumber = 0;
+                // Snap us to the platform, reset vertical velocity & jumps
+                nextY = hit.point.y + 0.005f;
+                _velocityY = 0f;
+                _jumpCount = 0;
             }
-            _currentVelocityY = 0.0f;
-            Vector3 pos = transform.localPosition;
-            pos.y = 0.0f;
-            transform.localPosition = pos;
         }
-    }
+        pos.y = nextY;
+        transform.position = pos;
 
-    public bool IsGoinUp()
-    {
-        return _state == State.Jumping && _currentVelocityY > 0.0001f;
+        // 4) Jump input (after we've snapped to ground above)
+        if (Input.GetKeyDown(KeyCode.Space) && _jumpCount < 2)
+        {
+            _velocityY = jumpSpeed;
+            _jumpCount++;
+            Debug.Log("Jump! Count: " + _jumpCount);
+        }
     }
 }

@@ -7,15 +7,18 @@ public class CameraManager : MonoBehaviour
 {
     [SerializeField] CharacterMover characterController;
     [SerializeField] GameObject virtualCamera;
+    [SerializeField] GameObject mainCamera;
+    [SerializeField] bool useVirtualCamera = false;
     [SerializeField] float cameraInertiaSpeed = 1.0f;
     [SerializeField] float charYBeforeFollow = 1.0f;
 
     Vector3 _targetLocalPosition = Vector3.zero;
+    Vector3 _mainCameraInitialPosition = Vector3.zero;
 
     // Start is called before the first frame update
     public void Start()
     {
-        
+        _mainCameraInitialPosition = mainCamera.transform.localPosition;
     }
 
     // Update is called once per frame
@@ -45,9 +48,11 @@ public class CameraManager : MonoBehaviour
 
     private void UpdatePositionFromTarget()
     {
+        Vector3 position = useVirtualCamera ? _targetLocalPosition : _mainCameraInitialPosition -_targetLocalPosition;
+        GameObject go = useVirtualCamera ? virtualCamera : mainCamera;
         // smooth transition with lerp
-        virtualCamera.transform.localPosition = Vector3.Lerp(virtualCamera.transform.localPosition,
-            _targetLocalPosition,
+        go.transform.localPosition = Vector3.Lerp(go.transform.localPosition,
+            position,
             Time.deltaTime * cameraInertiaSpeed);
     }
 }
