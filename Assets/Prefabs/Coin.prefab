@@ -90,6 +90,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5898518402915272280}
   - component: {fileID: 5436945896050602085}
+  - component: {fileID: 3113485921479424770}
   m_Layer: 0
   m_Name: CoinRotationBehaviour
   m_TagString: Untagged
@@ -125,7 +126,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0a314a76f3d98b488387dc9d484998e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 0
+  rotationSpeed: 50
+--- !u!114 &3113485921479424770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606416180525753086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bae0828c94412424a9b75ca0a7cd8563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amplitude: 0.1
+  frequency: 5
 --- !u!1 &5324846841717436494
 GameObject:
   m_ObjectHideFlags: 0
@@ -290,14 +305,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7652467417727390915}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.40557975, y: -0.40557975, z: 0.579228, w: 0.579228}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7061606858427258259}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -70, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7136682439420968229
 MonoBehaviour:
   m_ObjectHideFlags: 0

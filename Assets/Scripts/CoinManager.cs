@@ -15,6 +15,10 @@ public class CoinManager : MonoBehaviour
 
     public void Start()
     {
+        for (float x = -5.0f; x <= 5.0f; x += 1.0f)
+        {
+            AddThreeCoins(x * 10.0f);
+        }
         SpawnCoin(new Vector3(0, 8, 0));
         SpawnCoin(new Vector3(-2, 6, 0));
         SpawnCoin(new Vector3(2, 6, 0));
@@ -32,6 +36,14 @@ public class CoinManager : MonoBehaviour
         }
     }
 
+    private void AddThreeCoins(float x)
+    {
+
+        SpawnCoin(new Vector3(x, 8, 0));
+        SpawnCoin(new Vector3(x-2, 6, 0));
+        SpawnCoin(new Vector3(x+2, 6, 0));
+    }
+
     public void Update()
     {
         CheckCollisions();
@@ -39,7 +51,8 @@ public class CoinManager : MonoBehaviour
 
     public void SpawnCoin(Vector3 position)
     {
-        GameObject coin = Instantiate(coinPrefab, position, Quaternion.identity);
+        GameObject coin = Instantiate(coinPrefab, transform);
+        coin.transform.localPosition = position;
         coins.Add(coin);
     }
 

@@ -60,8 +60,10 @@ public class CharacterMover : MonoBehaviour
             pos.y = 0.0f;
             transform.localPosition = pos;
         }
+    }
 
-
-
+    public bool IsGoinUp()
+    {
+        return _state == State.Jumping && _currentVelocityY > 0.0001f;
     }
 }
